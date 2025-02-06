@@ -40,3 +40,8 @@ async function enviarFormulario(event) {
         document.getElementById("modalRegistro").style.display = "flex";
     }
 }
+
+// Función para cerrar el modal
+function cerrarModal() {
+    document.getElementById("modalRegistro").style.display = "none";
+}
