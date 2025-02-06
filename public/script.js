@@ -13,7 +13,7 @@ async function enviarFormulario(event) {
 
     try {
         // Envía los datos al servidor
-        const respuesta = await fetch("http://localhost:5000/registro", {
+        const respuesta = await fetch("https://formulario14febrero.onrender.com", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(datos)
