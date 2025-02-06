@@ -1,9 +1,7 @@
 async function enviarFormulario(event) {
-    event.preventDefault(); // Evita el envío tradicional del formulario
+    event.preventDefault(); 
 
     const formulario = event.target;
-
-    // Recopila los datos del formulario
     const datos = {
         nombre: document.getElementById("nombre").value,
         grupo: document.getElementById("grupo").value,
@@ -12,21 +10,28 @@ async function enviarFormulario(event) {
     };
 
     try {
-        // Envía los datos al servidor
         const respuesta = await fetch("https://formulario14febrero.onrender.com/registro", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(datos)
         });
 
-        // Procesa la respuesta del servidor
-        const resultado = await respuesta.json();
-        
-        // Muestra el modal con el mensaje
-        document.getElementById("mensajeModal").innerText = resultado.mensaje;
+        if (!respuesta.ok) {
+            throw new Error(`Error del servidor: ${respuesta.status} ${respuesta.statusText}`);
+        }
+
+        // Detecta si la respuesta es JSON
+        const contentType = respuesta.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+            const resultado = await respuesta.json();
+            document.getElementById("mensajeModal").innerText = resultado.mensaje;
+        } else {
+            const texto = await respuesta.text();
+            document.getElementById("mensajeModal").innerText = "Respuesta inesperada del servidor: " + texto;
+        }
+
         document.getElementById("modalRegistro").style.display = "flex";
 
-        // Limpia el formulario si el registro fue exitoso
         if (respuesta.status === 201) {
             formulario.reset();
         }
@@ -34,9 +39,4 @@ async function enviarFormulario(event) {
         document.getElementById("mensajeModal").innerText = "Error al enviar el formulario: " + error.message;
         document.getElementById("modalRegistro").style.display = "flex";
     }
-}
-
-// Función para cerrar el modal
-function cerrarModal() {
-    document.getElementById("modalRegistro").style.display = "none";
 }
